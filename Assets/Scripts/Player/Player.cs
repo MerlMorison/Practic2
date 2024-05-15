@@ -1,7 +1,7 @@
 using PlayerMove;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
 
 
     [SerializeField] private float _jumpPower;
-    [SerializeField] private float _groundCheckDistance;    
+    [SerializeField] private float _groundCheckDistance;
 
     private Animator _anim;
     private PlayerMovement _inputManager;
@@ -48,10 +48,10 @@ public class Player : MonoBehaviour
     {
         var moveDirection = _inputManager.PlayerWASD.WASD.ReadValue<Vector2>();
         var moveInput = new Vector3(moveDirection.x, 0f, moveDirection.y);
-                
+
         moveInput = moveInput.normalized * _playerSpeed;
         moveInput = transform.TransformDirection(moveInput);
-       
+
         _player.velocity = new Vector3(moveInput.x, _player.velocity.y, moveInput.z);
 
     }
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
         {
             _isBuffActive = true;
             _playerSpeed *= _buffSpeed;
-            StartCoroutine(DisableBuffAfterDelay(10f)); 
+            StartCoroutine(DisableBuffAfterDelay(5f));
         }
     }
 
