@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 {
 
     [SerializeField] private Rigidbody _player;
+    [SerializeField] private Collider _playerCollider;
 
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _buffSpeed;
@@ -15,6 +16,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float _jumpPower;
     [SerializeField] private float _groundCheckDistance;
+
+    [SerializeField] private LayerMask _Collision;
 
     private Animator _anim;
     private PlayerMovement _inputManager;
@@ -61,6 +64,7 @@ public class Player : MonoBehaviour
         {
             _isBuffActive = true;
             _playerSpeed *= _buffSpeed;
+           // _playerCollider.enabled = false;
             StartCoroutine(DisableBuffAfterDelay(5f));
         }
     }
@@ -70,6 +74,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(delay);
         _playerSpeed /= _buffSpeed;
         _isBuffActive = false;
+       // _playerCollider.enabled = true;
     }
     private void OnEnable()
     {
