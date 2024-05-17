@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _buffSpeed;
+    [SerializeField] private float _rotationSpeed = 2f;
 
 
 
@@ -44,7 +45,7 @@ public class Player : MonoBehaviour
         {
             _anim.SetBool("Jump", true);
             _player.AddForce(Vector3.up * _jumpPower, ForceMode.Impulse);
-            Invoke("ResetJumpAnimation", 1.0f);
+            Invoke("ResetJumpAnimation", 1.2f);
         }
     }
     private void FixedUpdate()
@@ -55,9 +56,25 @@ public class Player : MonoBehaviour
         moveInput = moveInput.normalized * _playerSpeed;
         moveInput = transform.TransformDirection(moveInput);
 
+        var targetSpeed = moveDirection.y == 0 ? Mathf.Abs(moveDirection.x) : moveDirection.y * _playerSpeed;
+        var direction = Mathf.Lerp(_anim.GetFloat("Direction"), moveDirection.x, 1f);
+        var speed = Mathf.Lerp(_anim.GetFloat("Speed"), targetSpeed, 1f);
+
+        _anim.SetFloat("Speed", speed);
+        _anim.SetFloat("Direction", direction);
+
         _player.velocity = new Vector3(moveInput.x, _player.velocity.y, moveInput.z);
 
+        // Поворот персонажа в соответствии с направлением движения
+        if (moveDirection != Vector2.zero)
+        {
+            var lookRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0f, moveDirection.y));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * _rotationSpeed);
+        }
     }
+
+
+
     private void Buff(InputAction.CallbackContext context)
     {
         if (!_isBuffActive)
@@ -83,5 +100,9 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         _inputManager.Disable();
+    }
+    private void ResetJumpAnimation()
+    {
+        _anim.SetBool("Jump", false);
     }
 }
