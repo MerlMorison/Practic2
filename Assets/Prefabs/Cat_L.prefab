@@ -146,6 +146,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -184,6 +196,10 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2e05a747a6709c347be39ce67225f341, type: 3}
       propertyPath: m_Name
@@ -308,6 +324,7 @@ MonoBehaviour:
   _playerCollider: {fileID: 569142362948733101}
   _playerSpeed: 10
   _buffSpeed: 1.5
+  _rotationSpeed: 10
   _jumpPower: 0
   _groundCheckDistance: 0
   _Collision:

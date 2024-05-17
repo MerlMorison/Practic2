@@ -5,49 +5,57 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-
     [SerializeField] private Rigidbody _player;
-    [SerializeField] private Collider _playerCollider;
+    [SerializeField] private BoxCollider _playerCollider;
 
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _buffSpeed;
     [SerializeField] private float _rotationSpeed = 2f;
-
-
-
     [SerializeField] private float _jumpPower;
-    [SerializeField] private float _groundCheckDistance;
-
-    [SerializeField] private LayerMask _Collision;
+    [SerializeField] private LayerMask _collision;
 
     private Animator _anim;
     private PlayerMovement _inputManager;
-    private bool _isGrounded;
     private bool _isBuffActive;
+    private Vector3 _originalColliderSize;
+    private float _originalHeight;
 
     private void Awake()
     {
         _anim = GetComponent<Animator>();
-
         _inputManager = new PlayerMovement();
-
         _inputManager.PlayerWASD.Jump.performed += Jump;
         _inputManager.PlayerWASD.Buff.performed += Buff;
-        //_inputManager.PlayerWASD.Slide.performed += Slide;
-
     }
+
+    private void Start()
+    {
+        _originalColliderSize = _playerCollider.size;
+        _originalHeight = _playerCollider.size.y;
+    }
+
     private void Jump(InputAction.CallbackContext context)
     {
-        _isGrounded = Physics.Raycast(_player.transform.position, Vector3.down, _groundCheckDistance);
-        Debug.DrawLine(_player.transform.position, _player.transform.position + Vector3.down * _groundCheckDistance, Color.blue);
-
-        if (_isGrounded && !_anim.GetBool("Jump"))
+        if (context.performed && IsGrounded())
         {
-            _anim.SetBool("Jump", true);
+            _playerCollider.size = new Vector3(_originalColliderSize.x, _originalHeight / 2f, _originalColliderSize.z);
             _player.AddForce(Vector3.up * _jumpPower, ForceMode.Impulse);
+            _anim.SetBool("Jump", true);
             Invoke("ResetJumpAnimation", 1.2f);
         }
     }
+
+    private bool IsGrounded()
+    {
+        return Physics.Raycast(_playerCollider.bounds.center, Vector3.down, _playerCollider.bounds.extents.y + 2f, _collision);
+    }
+
+    private void ResetJumpAnimation()
+    {
+        _anim.SetBool("Jump", false);
+        _playerCollider.size = _originalColliderSize;
+    }
+
     private void FixedUpdate()
     {
         var moveDirection = _inputManager.PlayerWASD.WASD.ReadValue<Vector2>();
@@ -56,7 +64,7 @@ public class Player : MonoBehaviour
         moveInput = moveInput.normalized * _playerSpeed;
         moveInput = transform.TransformDirection(moveInput);
 
-        var targetSpeed = moveDirection.y == 0 ? Mathf.Abs(moveDirection.x) : moveDirection.y * _playerSpeed;
+        var targetSpeed = Mathf.Abs(moveDirection.y) < 0.01f ? Mathf.Abs(moveDirection.x) : moveDirection.y * _playerSpeed;
         var direction = Mathf.Lerp(_anim.GetFloat("Direction"), moveDirection.x, 1f);
         var speed = Mathf.Lerp(_anim.GetFloat("Speed"), targetSpeed, 1f);
 
@@ -65,7 +73,6 @@ public class Player : MonoBehaviour
 
         _player.velocity = new Vector3(moveInput.x, _player.velocity.y, moveInput.z);
 
-        // Поворот персонажа в соответствии с направлением движения
         if (moveDirection != Vector2.zero)
         {
             var lookRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0f, moveDirection.y));
@@ -73,15 +80,12 @@ public class Player : MonoBehaviour
         }
     }
 
-
-
     private void Buff(InputAction.CallbackContext context)
     {
         if (!_isBuffActive)
         {
             _isBuffActive = true;
             _playerSpeed *= _buffSpeed;
-           // _playerCollider.enabled = false;
             StartCoroutine(DisableBuffAfterDelay(5f));
         }
     }
@@ -91,18 +95,9 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(delay);
         _playerSpeed /= _buffSpeed;
         _isBuffActive = false;
-       // _playerCollider.enabled = true;
     }
-    private void OnEnable()
-    {
-        _inputManager.Enable();
-    }
-    private void OnDisable()
-    {
-        _inputManager.Disable();
-    }
-    private void ResetJumpAnimation()
-    {
-        _anim.SetBool("Jump", false);
-    }
+
+    private void OnEnable() => _inputManager.Enable();
+
+    private void OnDisable() => _inputManager.Disable();
 }
