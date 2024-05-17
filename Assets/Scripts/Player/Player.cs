@@ -10,13 +10,13 @@ public class Player : MonoBehaviour
 
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _buffSpeed;
-    [SerializeField] private float _rotationSpeed = 2f;
+    [SerializeField] private float _rotationSpeed;
     [SerializeField] private float _jumpPower;
     [SerializeField] private LayerMask _collision;
 
     private Animator _anim;
     private PlayerMovement _inputManager;
-    private bool _isBuffActive;
+    private bool _canUseBuff = true; // Флаг, показывающий, можно ли использовать бафф
     private Vector3 _originalColliderSize;
     private float _originalHeight;
     private float _accelerationInterval = 5f; // Интервал ускорения
@@ -29,13 +29,19 @@ public class Player : MonoBehaviour
         _inputManager.PlayerWASD.Jump.performed += Jump;
         _inputManager.PlayerWASD.Buff.performed += Buff;
     }
-
     private void Start()
     {
         _originalColliderSize = _playerCollider.size;
         _originalHeight = _playerCollider.size.y;
     }
+    private void FixedUpdate()
+    {
+        MovePlayer();
+        RotatePlayer();
+        AcceleratePlayer();
+    }
 
+    // ______________________________________________________________________СТРИБКИ________________________________________________________________________________________
     private void Jump(InputAction.CallbackContext context)
     {
         if (context.performed && IsGrounded())
@@ -57,8 +63,8 @@ public class Player : MonoBehaviour
         _anim.SetBool("Jump", false);
         _playerCollider.size = _originalColliderSize;
     }
-
-    private void FixedUpdate()
+    // ___________________________________________________________________РУХ ПЕРСОНАЖА_____________________________________________________________________________________
+    private void MovePlayer()
     {
         var moveDirection = _inputManager.PlayerWASD.WASD.ReadValue<Vector2>();
         var moveInput = new Vector3(moveDirection.x, 0f, moveDirection.y);
@@ -74,40 +80,44 @@ public class Player : MonoBehaviour
         _anim.SetFloat("Direction", direction);
 
         _player.velocity = new Vector3(moveInput.x, _player.velocity.y, moveInput.z);
+    }
 
+    private void RotatePlayer()
+    {
+        var moveDirection = _inputManager.PlayerWASD.WASD.ReadValue<Vector2>();
         if (moveDirection != Vector2.zero)
         {
             var lookRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0f, moveDirection.y));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * _rotationSpeed);
         }
+    }
 
-        // Обновляем таймер ускорения и увеличиваем скорость, если прошло достаточно времени
+    private void AcceleratePlayer()
+    {
         _accelerationTimer += Time.fixedDeltaTime;
         if (_accelerationTimer >= _accelerationInterval)
         {
-            _playerSpeed += 1f; // Увеличиваем скорость игрока на 1
-            _accelerationTimer = 0f; // Сбрасываем таймер
+            _playerSpeed += 1f;
+            _accelerationTimer = 0f;
         }
     }
-
-
+    // ___________________________________________________________________БАФ ПЕРСОНАЖА_____________________________________________________________________________________
     private void Buff(InputAction.CallbackContext context)
     {
-        if (!_isBuffActive)
+        if (_canUseBuff)
         {
-            _isBuffActive = true;
-            _playerSpeed *= _buffSpeed;
-            StartCoroutine(DisableBuffAfterDelay(5f));
+            _canUseBuff = false; // Блокируем возможность повторного использования баффа
+            _playerSpeed -= 4f; // Уменьшаем скорость игрока на 4
+            StartCoroutine(EnableBuffAfterDelay(5f)); // Запускаем корутину для разблокировки возможности повторного использования баффа
         }
     }
 
-    private IEnumerator DisableBuffAfterDelay(float delay)
+    private IEnumerator EnableBuffAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        _playerSpeed /= _buffSpeed;
-        _isBuffActive = false;
+        _canUseBuff = true; // Разрешаем повторное использование баффа
     }
-
+    // _______________________________________________________________________ІНШЕ_________________________________________________________________________________________
     private void OnEnable() => _inputManager.Enable();
 
     private void OnDisable() => _inputManager.Disable();
