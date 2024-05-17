@@ -2,18 +2,16 @@ using UnityEngine;
 
 public class FollowPlayer : MonoBehaviour
 {
-    public Transform target; // Ссылка на целевой объект (игрока)
-    public Vector3 offset;   // Смещение камеры относительно цели
+    [SerializeField] private Transform player; // Ссылка на игрока
+    [SerializeField] private Vector3 offset; // Смещение камеры относительно игрока
 
-    void LateUpdate()
+    private void Update()
     {
-        if (target != null)
+        // Если есть ссылка на игрока, обновляем позицию камеры
+        if (player != null)
         {
-            // Позиционирование камеры следом за игроком с учетом смещения
-            transform.position = target.position + offset;
-
-            // Камера всегда ориентирована в сторону цели
-            transform.LookAt(target);
+            // Устанавливаем позицию камеры как позицию игрока плюс смещение
+            transform.position = player.position + offset;
         }
     }
 }

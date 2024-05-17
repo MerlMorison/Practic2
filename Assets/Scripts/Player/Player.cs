@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
     private bool _isBuffActive;
     private Vector3 _originalColliderSize;
     private float _originalHeight;
+    private float _accelerationInterval = 5f; // Интервал ускорения
+    private float _accelerationTimer = 0f; // Таймер для ускорения
 
     private void Awake()
     {
@@ -78,7 +80,16 @@ public class Player : MonoBehaviour
             var lookRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0f, moveDirection.y));
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * _rotationSpeed);
         }
+
+        // Обновляем таймер ускорения и увеличиваем скорость, если прошло достаточно времени
+        _accelerationTimer += Time.fixedDeltaTime;
+        if (_accelerationTimer >= _accelerationInterval)
+        {
+            _playerSpeed += 1f; // Увеличиваем скорость игрока на 1
+            _accelerationTimer = 0f; // Сбрасываем таймер
+        }
     }
+
 
     private void Buff(InputAction.CallbackContext context)
     {

@@ -5,6 +5,7 @@ public class TileGenerator : MonoBehaviour
 {
     [SerializeField] private GameObject floorPrefab; // Префаб пола
     [SerializeField] private GameObject[] obstaclePrefabs; // Массив префабов препятствий
+    [SerializeField] private GameObject[] movingObstaclePrefabs; // Массив префабов для движущихся препятствий
     [SerializeField] private Transform player; // Ссылка на игрока
     private List<GameObject> activeTiles = new List<GameObject>(); // Список активных плит
     private float spawnPos = 0; // Позиция для спауна следующей плиты
@@ -46,22 +47,36 @@ public class TileGenerator : MonoBehaviour
     private void PlaceObstacles(Transform tile)
     {
         // Получаем все точки спауна препятствий на плите
-        List<Transform> spawnPoints = new List<Transform>();
+        List<Transform> obstacleSpawnPoints = new List<Transform>();
+        List<Transform> movingObstacleSpawnPoints = new List<Transform>();
         foreach (Transform child in tile)
         {
             if (child.CompareTag("ObstacleSpawnPoint"))
             {
-                spawnPoints.Add(child);
+                obstacleSpawnPoints.Add(child);
+            }
+            else if (child.CompareTag("MovingObstacleSpawnPoint"))
+            {
+                movingObstacleSpawnPoints.Add(child);
             }
         }
 
         // Если есть хотя бы одна точка спауна, выбираем случайную и размещаем на ней препятствие
-        if (spawnPoints.Count > 0)
+        if (obstacleSpawnPoints.Count > 0)
         {
-            int randomIndex = Random.Range(0, spawnPoints.Count);
-            Transform spawnPoint = spawnPoints[randomIndex];
+            int randomIndex = Random.Range(0, obstacleSpawnPoints.Count);
+            Transform spawnPoint = obstacleSpawnPoints[randomIndex];
             int randomObstacleIndex = Random.Range(0, obstaclePrefabs.Length);
             Instantiate(obstaclePrefabs[randomObstacleIndex], spawnPoint.position, spawnPoint.rotation, tile);
+        }
+
+        // Размещение движущихся препятствий только на точках спауна для них
+        if (movingObstacleSpawnPoints.Count > 0 && movingObstaclePrefabs.Length > 0)
+        {
+            int randomIndex = Random.Range(0, movingObstacleSpawnPoints.Count);
+            Transform spawnPoint = movingObstacleSpawnPoints[randomIndex];
+            int randomObstacleIndex = Random.Range(0, movingObstaclePrefabs.Length);
+            Instantiate(movingObstaclePrefabs[randomObstacleIndex], spawnPoint.position, spawnPoint.rotation, tile);
         }
     }
 
