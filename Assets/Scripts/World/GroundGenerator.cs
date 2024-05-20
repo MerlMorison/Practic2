@@ -24,11 +24,13 @@ public class TileGenerator : MonoBehaviour
 
     void Update()
     {
-        // Проверка, нужно ли создавать новую плиту
-        if (player.position.z - 19 > spawnPos - (startTiles * tileLength))
+        if (player != null)
         {
-            SpawnTile(); // Создание новой плиты
-            DeleteTile(); // Удаление плиты за игроком
+            if (player.position.z - 19 > spawnPos - (startTiles * tileLength))
+            {
+                SpawnTile();
+                DeleteTile();
+            }
         }
     }
 
