@@ -423,6 +423,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cat_L_Black
       objectReference: {fileID: 0}
+    - target: {fileID: 5080291477522553048, guid: 842c650e107c0c842bd63593a83fdcc9, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 5605576919427662434, guid: 842c650e107c0c842bd63593a83fdcc9, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.0076071247
