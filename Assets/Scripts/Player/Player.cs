@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private Rigidbody _player;
     [SerializeField] private BoxCollider _playerCollider;
+    private static BuffUIManager _buffUIManager;
+
 
     [SerializeField] private float _playerSpeed;
     [SerializeField] private float _buffSpeed;
@@ -16,11 +18,11 @@ public class Player : MonoBehaviour
 
     private Animator _anim;
     private PlayerMovement _inputManager;
-    private bool _canUseBuff = true; // Флаг, показывающий, можно ли использовать бафф
+    private bool _canUseBuff = true;
     private Vector3 _originalColliderSize;
     private float _originalHeight;
-    private float _accelerationInterval = 5f; // Интервал ускорения
-    private float _accelerationTimer = 0f; // Таймер для ускорения
+    private float _accelerationInterval = 5f;
+    private float _accelerationTimer = 0f;
 
     private void Awake()
     {
@@ -33,6 +35,7 @@ public class Player : MonoBehaviour
     {
         _originalColliderSize = _playerCollider.size;
         _originalHeight = _playerCollider.size.y;
+        _buffUIManager = FindObjectOfType<BuffUIManager>();
     }
     private void FixedUpdate()
     {
@@ -104,21 +107,26 @@ public class Player : MonoBehaviour
     // ___________________________________________________________________БАФ ПЕРСОНАЖА_____________________________________________________________________________________
     private void Buff(InputAction.CallbackContext context)
     {
-        if (_canUseBuff)
+        if (_canUseBuff && _buffUIManager.GetBuffCount() > 0) // Проверяем, доступен ли бафф и есть ли у игрока хотя бы один бафф
         {
-            _canUseBuff = false; // Блокируем возможность повторного использования баффа
-            _playerSpeed -= 4f; // Уменьшаем скорость игрока на 4
-            StartCoroutine(EnableBuffAfterDelay(5f)); // Запускаем корутину для разблокировки возможности повторного использования баффа
+            _canUseBuff = false;
+            _playerSpeed -= _buffSpeed;
+            _buffUIManager.DecrementBuffCount(); // Уменьшить количество доступных баффов у игрока
+            _buffUIManager.StartBuffTimer(_buffUIManager.BuffDuration); // Запустить таймер баффа в UI с длительностью из BuffUIManager
+            StartCoroutine(EnableBuffAfterDelay(_buffUIManager.BuffDuration));
         }
     }
 
+    // Метод, который включает возможность использования баффа после задержки
     private IEnumerator EnableBuffAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        _canUseBuff = true; // Разрешаем повторное использование баффа
+        _canUseBuff = true;
     }
+
     // _______________________________________________________________________ІНШЕ_________________________________________________________________________________________
     private void OnEnable() => _inputManager.Enable();
 
     private void OnDisable() => _inputManager.Disable();
 }
+
