@@ -1,4 +1,4 @@
-using PlayerMove;
+using InputS;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -107,17 +107,16 @@ public class Player : MonoBehaviour
     // ___________________________________________________________________БАФ ПЕРСОНАЖА_____________________________________________________________________________________
     private void Buff(InputAction.CallbackContext context)
     {
-        if (_canUseBuff && _buffUIManager.GetBuffCount() > 0) // Проверяем, доступен ли бафф и есть ли у игрока хотя бы один бафф
+        if (_canUseBuff && _buffUIManager.GetBuffCount() > 0)
         {
             _canUseBuff = false;
             _playerSpeed -= _buffSpeed;
-            _buffUIManager.DecrementBuffCount(); // Уменьшить количество доступных баффов у игрока
-            _buffUIManager.StartBuffTimer(_buffUIManager.BuffDuration); // Запустить таймер баффа в UI с длительностью из BuffUIManager
+            _buffUIManager.DecrementBuffCount();
+            _buffUIManager.StartBuffTimer(_buffUIManager.BuffDuration);
             StartCoroutine(EnableBuffAfterDelay(_buffUIManager.BuffDuration));
         }
     }
 
-    // Метод, который включает возможность использования баффа после задержки
     private IEnumerator EnableBuffAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -129,4 +128,5 @@ public class Player : MonoBehaviour
 
     private void OnDisable() => _inputManager.Disable();
 }
+
 

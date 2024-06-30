@@ -38,7 +38,7 @@ public class CollectibleSpawner : TileSpawner
         foreach (Transform spawnPoint in chosenSpawnPoints)
         {
             GameObject collectible = Instantiate(collectiblePrefab, spawnPoint.position, Quaternion.identity, tile);
-            collectible.transform.Rotate(Vector3.up, 180f); // Повернем предмет на 180 градусов по оси Y
+            collectible.transform.Rotate(Vector3.up, 180f);
         }
     }
 }

@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class StaticObstacle : MonoBehaviour
 {
+    private UIManager uiManager;
+    private void Start()
+    {
+        uiManager = FindObjectOfType<UIManager>();
+    }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -17,5 +22,6 @@ public class StaticObstacle : MonoBehaviour
     private void DestroyPlayer(GameObject player)
     {
         Destroy(player);
+        uiManager.ShowGameOverMenu();
     }
 }

@@ -21,7 +21,7 @@ public class CollectibleUI : MonoBehaviour
         if (eventName == "CollectItem")
         {
             itemCount++;
-            itemCountText.text = "Items Collected: " + itemCount;
+            itemCountText.text = " " + itemCount;
         }
     }
 }

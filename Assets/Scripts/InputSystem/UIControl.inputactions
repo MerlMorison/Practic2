@@ -1,0 +1,34 @@
+{
+    "name": "UIControl",
+    "maps": [
+        {
+            "name": "UI",
+            "id": "2e5c1c07-b8d6-4dad-bb30-8fc5e8be9209",
+            "actions": [
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "8b978a44-7c46-473a-8a68-ab7d76504c50",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c40ddc4b-77c4-4ba3-af1e-a3563e7f8117",
+                    "path": "<Keyboard>/p",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

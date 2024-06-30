@@ -16,7 +16,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine;
 
-namespace PlayerMove
+namespace InputS
 {
     public partial class @PlayerMovement: IInputActionCollection2, IDisposable
     {
@@ -58,13 +58,13 @@ namespace PlayerMove
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Slide"",
-                    ""type"": ""Button"",
-                    ""id"": ""43b0f204-7c0d-40eb-b5e3-b341e8cf898e"",
-                    ""expectedControlType"": """",
+                    ""name"": ""Look"",
+                    ""type"": ""Value"",
+                    ""id"": ""21b878cc-6529-4e10-be18-27724d898403"",
+                    ""expectedControlType"": ""Delta"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -136,12 +136,12 @@ namespace PlayerMove
                 },
                 {
                     ""name"": """",
-                    ""id"": ""fa4c92ee-d96a-4149-a09b-382a59b019cf"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""id"": ""33b0081d-863c-4ed0-a1b2-675a4bad6a44"",
+                    ""path"": ""<Pointer>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slide"",
+                    ""action"": ""Look"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -155,7 +155,7 @@ namespace PlayerMove
             m_PlayerWASD_WASD = m_PlayerWASD.FindAction("WASD", throwIfNotFound: true);
             m_PlayerWASD_Jump = m_PlayerWASD.FindAction("Jump", throwIfNotFound: true);
             m_PlayerWASD_Buff = m_PlayerWASD.FindAction("Buff", throwIfNotFound: true);
-            m_PlayerWASD_Slide = m_PlayerWASD.FindAction("Slide", throwIfNotFound: true);
+            m_PlayerWASD_Look = m_PlayerWASD.FindAction("Look", throwIfNotFound: true);
         }
 
         ~@PlayerMovement()
@@ -225,7 +225,7 @@ namespace PlayerMove
         private readonly InputAction m_PlayerWASD_WASD;
         private readonly InputAction m_PlayerWASD_Jump;
         private readonly InputAction m_PlayerWASD_Buff;
-        private readonly InputAction m_PlayerWASD_Slide;
+        private readonly InputAction m_PlayerWASD_Look;
         public struct PlayerWASDActions
         {
             private @PlayerMovement m_Wrapper;
@@ -233,7 +233,7 @@ namespace PlayerMove
             public InputAction @WASD => m_Wrapper.m_PlayerWASD_WASD;
             public InputAction @Jump => m_Wrapper.m_PlayerWASD_Jump;
             public InputAction @Buff => m_Wrapper.m_PlayerWASD_Buff;
-            public InputAction @Slide => m_Wrapper.m_PlayerWASD_Slide;
+            public InputAction @Look => m_Wrapper.m_PlayerWASD_Look;
             public InputActionMap Get() { return m_Wrapper.m_PlayerWASD; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -252,9 +252,9 @@ namespace PlayerMove
                 @Buff.started += instance.OnBuff;
                 @Buff.performed += instance.OnBuff;
                 @Buff.canceled += instance.OnBuff;
-                @Slide.started += instance.OnSlide;
-                @Slide.performed += instance.OnSlide;
-                @Slide.canceled += instance.OnSlide;
+                @Look.started += instance.OnLook;
+                @Look.performed += instance.OnLook;
+                @Look.canceled += instance.OnLook;
             }
 
             private void UnregisterCallbacks(IPlayerWASDActions instance)
@@ -268,9 +268,9 @@ namespace PlayerMove
                 @Buff.started -= instance.OnBuff;
                 @Buff.performed -= instance.OnBuff;
                 @Buff.canceled -= instance.OnBuff;
-                @Slide.started -= instance.OnSlide;
-                @Slide.performed -= instance.OnSlide;
-                @Slide.canceled -= instance.OnSlide;
+                @Look.started -= instance.OnLook;
+                @Look.performed -= instance.OnLook;
+                @Look.canceled -= instance.OnLook;
             }
 
             public void RemoveCallbacks(IPlayerWASDActions instance)
@@ -293,7 +293,7 @@ namespace PlayerMove
             void OnWASD(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnBuff(InputAction.CallbackContext context);
-            void OnSlide(InputAction.CallbackContext context);
+            void OnLook(InputAction.CallbackContext context);
         }
     }
 }
