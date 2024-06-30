@@ -1,12 +1,20 @@
+using InputS;
 using UnityEngine;
 
 public class StaticObstacle : MonoBehaviour
 {
     private UIManager uiManager;
+
     private void Start()
     {
+        // Поиск UIManager в сцене
         uiManager = FindObjectOfType<UIManager>();
+        if (uiManager == null)
+        {
+            Debug.LogError("UIManager not found in the scene!");
+        }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -22,6 +30,14 @@ public class StaticObstacle : MonoBehaviour
     private void DestroyPlayer(GameObject player)
     {
         Destroy(player);
-        uiManager.ShowGameOverMenu();
+        // Проверка на наличие ссылки на UIManager перед вызовом метода
+        if (uiManager != null)
+        {
+            uiManager.ShowGameOverMenu();
+        }
+        else
+        {
+            Debug.LogError("UIManager reference is null!");
+        }
     }
 }
