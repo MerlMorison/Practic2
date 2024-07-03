@@ -8,21 +8,22 @@ namespace InputS
 {
     public class UIManager : MonoBehaviour, IUIActions
     {
+
         [SerializeField] private GameObject startMenu;
         [SerializeField] private GameObject gameOverMenu;
         [SerializeField] private GameObject gameMenu;
-        [SerializeField] private GameObject pauseMenu;
+        [SerializeField] private PauseMenu_UI pauseMenu;
         [SerializeField] private GameObject settingsMenu;
+        [SerializeField] private GameObject emptyMenu;
 
         private void Awake()
         {
-            // Подписываемся на UI ввод
             InputController.SubscribeOnUIInput(this);
+            pauseMenu.OnContinue += TogglePause;
         }
 
         private void Start()
         {
-            // Показать стартовое меню при запуске игры
             ShowStartMenu();
         }
 
@@ -31,8 +32,8 @@ namespace InputS
             startMenu.SetActive(menuToActivate == startMenu);
             gameOverMenu.SetActive(menuToActivate == gameOverMenu);
             gameMenu.SetActive(menuToActivate == gameMenu);
-            pauseMenu.SetActive(menuToActivate == pauseMenu);
             settingsMenu.SetActive(menuToActivate == settingsMenu);
+            emptyMenu.SetActive(menuToActivate == emptyMenu);
         }
 
         private void ShowStartMenu()
@@ -42,7 +43,6 @@ namespace InputS
 
         public void StartGame()
         {
-            // Начать корутину для смены меню с задержкой
             StartCoroutine(DelayedStartGame());
         }
 
@@ -50,7 +50,6 @@ namespace InputS
         {
             yield return new WaitForSeconds(0.12f);
 
-            // Скрыть стартовое меню и открыть игровое меню
             SetMenuState(gameMenu);
         }
 
@@ -66,22 +65,32 @@ namespace InputS
 
         public void RestartGame()
         {
-            // Перезагрузка текущей сцены
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
-        // Метод для обработки паузы, соответствующий интерфейсу IUIActions
         public void OnPause(InputAction.CallbackContext context)
         {
-            if (context.performed)
+            if (context.phase != InputActionPhase.Performed) return;
+
+            TogglePause();
+        }
+        private void TogglePause()
+        {
+            var isPauseActive = !pauseMenu.gameObject.activeSelf;
+            pauseMenu.gameObject.SetActive(isPauseActive);
+
+            if (isPauseActive)
             {
-                bool isPaused = pauseMenu.activeSelf;
-                pauseMenu.SetActive(!isPaused);
-                gameMenu.SetActive(isPaused);
+                InputController.DisablePlayerInput();
+                SetMenuState(emptyMenu);
+            }
+            else
+            {
+                InputController.EnablePlayerInput();
+                gameMenu.SetActive(gameMenu);
             }
         }
 
-        // Включение и выключение ввода
         private void OnEnable()
         {
             InputController.EnableUIInput();

@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class CollectibleUI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text itemCountText;
+    [SerializeField] private TMP_Text[] textFields;
+
     private int itemCount = 0;
 
     private void OnEnable()
@@ -21,7 +22,10 @@ public class CollectibleUI : MonoBehaviour
         if (eventName == "CollectItem")
         {
             itemCount++;
-            itemCountText.text = " " + itemCount;
+            foreach (TMP_Text textField in textFields)
+            {
+                textField.text = " " + itemCount;
+            }
         }
     }
 }
