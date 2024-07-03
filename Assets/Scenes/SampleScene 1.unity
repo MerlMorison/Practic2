@@ -1292,7 +1292,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b916cf63b5e8ab24391366a33c0b2451, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemCountText: {fileID: 2115173680}
+  textFields:
+  - {fileID: 2115173680}
+  - {fileID: 1378195166}
 --- !u!114 &389871899
 MonoBehaviour:
   m_ObjectHideFlags: 0
