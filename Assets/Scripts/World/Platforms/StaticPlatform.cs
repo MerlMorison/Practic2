@@ -30,7 +30,7 @@ public class StaticObstacle : MonoBehaviour
     private void DestroyPlayer(GameObject player)
     {
         Destroy(player);
-        // Проверка на наличие ссылки на UIManager перед вызовом метода
+     
         if (uiManager != null)
         {
             uiManager.ShowGameOverMenu();

@@ -3,19 +3,19 @@ using UnityEngine;
 
 public class TileGenerator : MonoBehaviour
 {
-    [SerializeField] private GameObject floorPrefab; // Префаб пола
-    [SerializeField] private GameObject[] obstaclePrefabs; // Массив префабов препятствий
-    [SerializeField] private GameObject[] movingObstaclePrefabs; // Массив префабов для движущихся препятствий
-    [SerializeField] private Transform player; // Ссылка на игрока
-    private List<GameObject> activeTiles = new List<GameObject>(); // Список активных плит
-    private float spawnPos = 0; // Позиция для спауна следующей плиты
-    private float tileLength = 20; // Длина плиты
+    [SerializeField] private GameObject floorPrefab;
+    [SerializeField] private GameObject[] obstaclePrefabs;
+    [SerializeField] private GameObject[] movingObstaclePrefabs;
+    [SerializeField] private Transform player;
+    private List<GameObject> activeTiles = new List<GameObject>();
+    private float spawnPos = 0;
+    private float tileLength = 20;
 
-    private int startTiles = 6; // Количество начальных плит
+    private int startTiles = 6;
 
     void Start()
     {
-        // Создание начальных плит
+
         for (int i = 0; i < startTiles; i++)
         {
             SpawnTile();
@@ -36,19 +36,19 @@ public class TileGenerator : MonoBehaviour
 
     private void SpawnTile()
     {
-        // Создание плиты (пола)
+
         GameObject nextTile = Instantiate(floorPrefab, transform.forward * spawnPos, transform.rotation);
         activeTiles.Add(nextTile);
 
-        // Размещение препятствий на плите
+
         PlaceObstacles(nextTile.transform);
 
-        spawnPos += tileLength; // Увеличение позиции спауна для следующей плиты
+        spawnPos += tileLength;
     }
 
     private void PlaceObstacles(Transform tile)
     {
-        // Получаем все точки спауна препятствий на плите
+
         List<Transform> obstacleSpawnPoints = new List<Transform>();
         List<Transform> movingObstacleSpawnPoints = new List<Transform>();
         foreach (Transform child in tile)
@@ -63,7 +63,7 @@ public class TileGenerator : MonoBehaviour
             }
         }
 
-        // Если есть хотя бы одна точка спауна, выбираем случайную и размещаем на ней препятствие
+
         if (obstacleSpawnPoints.Count > 0)
         {
             int randomIndex = Random.Range(0, obstacleSpawnPoints.Count);
@@ -72,7 +72,7 @@ public class TileGenerator : MonoBehaviour
             Instantiate(obstaclePrefabs[randomObstacleIndex], spawnPoint.position, spawnPoint.rotation, tile);
         }
 
-        // Размещение движущихся препятствий только на точках спауна для них
+
         if (movingObstacleSpawnPoints.Count > 0 && movingObstaclePrefabs.Length > 0)
         {
             int randomIndex = Random.Range(0, movingObstacleSpawnPoints.Count);
@@ -84,7 +84,7 @@ public class TileGenerator : MonoBehaviour
 
     private void DeleteTile()
     {
-        // Удаление самой первой плиты из списка и уничтожение объекта
+
         Destroy(activeTiles[0]);
         activeTiles.RemoveAt(0);
     }
